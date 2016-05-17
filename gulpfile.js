@@ -4,6 +4,8 @@ const concat = require('gulp-concat')
 const cssmin = require('gulp-cssmin')
 const rollup = require('rollup')
 const babel = require('rollup-plugin-babel')
+const commonjs = require('rollup-plugin-commonjs')
+const nodeResolve = require('rollup-plugin-node-resolve')
 const del = require('del')
 const path = require('path')
 
@@ -56,7 +58,11 @@ gulp.task('css:clean', () => {
 gulp.task('js', ['js:clean'], () => {
   const index = rollup.rollup({
     entry: client.js.src + '/index.js',
-    plugins: [ babel() ]
+    plugins: [
+      babel(),
+      nodeResolve({browser: true}),
+      commonjs()
+    ]
   }).then(function (bundle) {
     bundle.write({
       dest: client.js.dest + '/index.js',
