@@ -1,13 +1,13 @@
-var gulp = require('gulp')
-var nodemon = require('gulp-nodemon')
-var sourcemaps = require('gulp-sourcemaps')
-var concat = require('gulp-concat')
-var uglify = require('gulp-uglify')
-var cssmin = require('gulp-cssmin')
-var del = require('del')
-var path = require('path')
+const gulp = require('gulp')
+const nodemon = require('gulp-nodemon')
+const concat = require('gulp-concat')
+const cssmin = require('gulp-cssmin')
+const rollup = require('rollup')
+const babel = require('rollup-plugin-babel')
+const del = require('del')
+const path = require('path')
 
-var client = {
+const client = {
   js: {
     src: 'client/js',
     dest: 'public/js'
@@ -20,14 +20,16 @@ var client = {
 
 gulp.task('default', ['js', 'css', 'start'])
 
-gulp.task('start', function () {
+gulp.task('build', ['js', 'css'])
+
+gulp.task('start', () => {
   nodemon({
     script: 'bin/www',
     ext: 'js css',
     ignore: ['public', 'logs'],
-    tasks: function (files) {
-      var tasks = []
-      files.forEach(function (file) {
+    tasks: files => {
+      let tasks = []
+      files.forEach(file => {
         console.log(`file changed: ${file}`)
         if (!path.relative(client.js.src, file).startsWith('..') &&
           !tasks.includes('js')) {
@@ -43,23 +45,28 @@ gulp.task('start', function () {
   })
 })
 
-gulp.task('js:clean', function () {
+gulp.task('js:clean', () => {
   return del([client.js.dest])
 })
 
-gulp.task('css:clean', function () {
+gulp.task('css:clean', () => {
   return del([client.css.dest])
 })
 
-gulp.task('js', ['js:clean'], function () {
-  return gulp.src(client.js.src + '/**/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(concat('graph.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(client.js.dest))
+gulp.task('js', ['js:clean'], () => {
+  const index = rollup.rollup({
+    entry: client.js.src + '/index.js',
+    plugins: [ babel() ]
+  }).then(function (bundle) {
+    bundle.write({
+      dest: client.js.dest + '/index.js',
+      format: 'umd'
+    })
+  })
+  return Promise.all([index])
 })
 
-gulp.task('css', ['css:clean'], function () {
+gulp.task('css', ['css:clean'], () => {
   return gulp.src(client.css.src + '/**/*.css')
     .pipe(concat('style.css'))
     .pipe(cssmin())
