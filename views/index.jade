@@ -1,9 +1,10 @@
 extends layout
 
 append script
- script(type="application/javascript").
+ script(type='application/javascript').
     System.import('/js/index.js')
 
 block content
   h1= title
   p Welcome to #{title}
+  main#entries

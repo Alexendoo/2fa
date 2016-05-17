@@ -43,7 +43,7 @@ app.use(router.routes())
   .use(router.allowedMethods())
 
 // log error
-app.on('error', function (err, ctx) {
+app.on('error', (err, ctx) => {
   logger.error('server error', err, ctx)
 })
 
