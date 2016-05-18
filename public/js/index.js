@@ -64,8 +64,8 @@ function updateUI () {
       const entryTimer = document.createElement('canvas')
       entryTimer.classList.add('entryTimer')
       entryTimer.setAttribute('data-period', row.doc.period)
-      entryTimer.setAttribute('width', 50)
-      entryTimer.setAttribute('height', 50)
+      entryTimer.setAttribute('width', 48)
+      entryTimer.setAttribute('height', 48)
 
       entry.appendChild(entryText)
       entry.appendChild(entryTimer)
@@ -84,7 +84,6 @@ function timer () {
 
   for (let entry of entries.children) {
     const entryTimer = entry.querySelector('.entryTimer')
-    // entryTimer.textContent = time % entryTimer.getAttribute('data-period')
     drawTimer(entryTimer)
   }
 
