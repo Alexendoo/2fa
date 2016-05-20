@@ -113,3 +113,11 @@ function drawTimer (canvas) {
   ctx.lineTo(radius, 0)
   ctx.fill()
 }
+
+function storeEntry (secret, issuer = '', algorithm = 'SHA1', period = 30, digits = 6) {
+  return new Promise((resolve, reject) => {
+    if (!secret) reject('secret missing')
+  })
+}
+
+// TODO: HMAC
