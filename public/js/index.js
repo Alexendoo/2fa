@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb'
+import { base32ToTypedArray } from './base32'
 
 PouchDB.debug.enable('*')
 
