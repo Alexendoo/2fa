@@ -1,4 +1,4 @@
-const dict = { // https://tools.ietf.org/html/rfc4648#section-6
+const dict = {
   'A': 0, 'K': 10, 'U': 20, '6': 30,
   'B': 1, 'L': 11, 'V': 21, '7': 31,
   'C': 2, 'M': 12, 'W': 22,
@@ -12,7 +12,8 @@ const dict = { // https://tools.ietf.org/html/rfc4648#section-6
 }
 
 /**
- * Decodes an rfc4648 base32 string into an ArrayBuffer
+ * Decodes an rfc4648 {@link https://tools.ietf.org/html/rfc4648#section-6}
+ * base32 string into an ArrayBuffer
  *
  * @param  {String} string A base32 encoded string
  *
