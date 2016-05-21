@@ -1,30 +1,45 @@
-import { recallEntries } from './storage'
+import { recallEntries, recallEntry } from './storage'
+import { getToken } from './crypto'
 
 let timerRunning = false
-updateUI()
+updateEntries()
 
-function updateUI () {
+// storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMX', 'company', 'example@email.com', 'SHA-1', 90)
+//   .then(entry => console.log(entry))
+
+function updateEntries () {
   timerRunning = false
-  recallEntries.then(result => {
+  recallEntries().then(result => {
     const entries = document.getElementById('entries')
 
     while (entries.firstChild) entries.removeChild(entries.firstChild)
 
     for (let row of result.rows) {
       const entry = document.createElement('div')
+      entry.classList.add('entry')
       entry.setAttribute('id', row.doc._id)
+      entry.setAttribute('data-period', row.doc.period)
+      entry.setAttribute('data-cycle', 0)
+
+      const entryToken = document.createElement('div')
+      entryToken.classList.add('entryToken')
 
       const entryIssuer = document.createElement('div')
       entryIssuer.classList.add('entryIssuer')
       entryIssuer.textContent = row.doc.issuer
 
+      const entryLabel = document.createElement('div')
+      entryLabel.classList.add('entryLabel')
+      entryLabel.textContent = row.doc.label
+
       const entryTimer = document.createElement('canvas')
       entryTimer.classList.add('entryTimer')
-      entryTimer.setAttribute('data-period', row.doc.period)
       entryTimer.setAttribute('width', 48)
       entryTimer.setAttribute('height', 48)
 
+      entry.appendChild(entryToken)
       entry.appendChild(entryIssuer)
+      entry.appendChild(entryLabel)
       entry.appendChild(entryTimer)
       entries.appendChild(entry)
     }
@@ -41,16 +56,31 @@ function timer () {
 
   for (let entry of entries.children) {
     const entryTimer = entry.querySelector('.entryTimer')
-    drawTimer(entryTimer)
+    const period = entry.getAttribute('data-period') * 1000
+
+    const cycle = Math.floor(Date.now() / period)
+    const lastCycle = entry.getAttribute('data-cycle')
+
+    drawTimer(entryTimer, period)
+
+    if (cycle > lastCycle) {
+      const entryToken = entry.querySelector('.entryToken')
+      entry.setAttribute('data-cycle', cycle)
+
+      recallEntry(entry.id).then(doc => {
+        return getToken(doc.keyData, new Uint32Array([0, cycle]))
+      }).then(token => {
+        entryToken.textContent = token
+      })
+    }
   }
 
   window.requestAnimationFrame(timer)
 }
 
-function drawTimer (canvas) {
+function drawTimer (canvas, period) {
   if (!canvas.getContext) return
   const radius = canvas.width / 2
-  const period = canvas.getAttribute('data-period')
   const time = Date.now() % period
   const endAngle = 1.5 * Math.PI + 2 * time * Math.PI / period
 

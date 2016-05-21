@@ -33,7 +33,7 @@ export function storeEntry (secret, issuer = null, label = null, algorithm = 'SH
     return exportKey(cryptoKey, 'jwk')
   }).then(jwk => {
     return db.put({
-      _id: Date.now(),
+      _id: new Date().toISOString(),
       keyData: jwk,
       issuer,
       label,
@@ -53,4 +53,16 @@ export function recallEntries () {
   return db.allDocs({
     include_docs: true
   })
+}
+
+/**
+ * Returns a promise resolving to a specified PouchDB document
+ *
+ * @param  {String} id The ID of the document
+ *
+ * @return {Promise} Resolves to the PouchDB document
+ * @see {@link https://pouchdb.com/api.html#fetch_document}
+ */
+export function recallEntry (id) {
+  return db.get(id)
 }

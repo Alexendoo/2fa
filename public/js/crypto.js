@@ -56,3 +56,23 @@ export function exportKey (key, format = 'jwk') {
     format, key
   )
 }
+
+/**
+ * Get the final user readable TOTP token
+ *
+ * @param  {(ArrayBuffer|Object)} keyData Key to use, as an ArrayBuffer or jwk
+ *                                        {@link https://tools.ietf.org/html/rfc7517}
+ * @param  {ArrayBuffer} timeCounter unsigned 32 bit time counter
+ *
+ * @return {Promise} Resolves to a String, the token
+ *
+ * @see {@link https://tools.ietf.org/html/rfc4226#section-5.3}
+ */
+export function getToken (keyData, timeCounter) {
+  return hmac(keyData, timeCounter).then(buffer => {
+    const view = Uint8Array(buffer)
+    const offest = view[view.length - 1] & 0x0F
+
+    return offest
+  })
+}
