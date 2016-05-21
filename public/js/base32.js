@@ -49,15 +49,15 @@ export function base32ToArrayBuffer (string) {
   // Insert the bytes into buffer
   for (let byte = 0; byte < size; byte++) {
     // 20bit alignment: 8 8 4|4 8 8
-    // offest:          0 1  2  3 4
+    // offset:          0 1  2  3 4
 
     const base = Math.floor(byte / 2.5)
-    const offest = byte % 5
+    const offset = byte % 5
 
-    if (offest === 2) {
+    if (offset === 2) {
       view[byte] = values[base] << 4 | values[base + 1] >> 16
     } else {
-      view[byte] = values[base] >> [12, 4, 0, 8, 0][offest]
+      view[byte] = values[base] >> [12, 4, 0, 8, 0][offset]
     }
   }
 

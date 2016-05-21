@@ -71,8 +71,8 @@ export function exportKey (key, format = 'jwk') {
 export function getToken (keyData, timeCounter) {
   return hmac(keyData, timeCounter).then(buffer => {
     const view = Uint8Array(buffer)
-    const offest = view[view.length - 1] & 0x0F
+    const offset = view[view.length - 1] & 0x0F
 
-    return offest
+    return offset
   })
 }
