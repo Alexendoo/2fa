@@ -1,66 +1,22 @@
-import PouchDB from 'pouchdb'
-import { base32ToArrayBuffer } from './base32'
+import { recallEntries } from './storage'
 
-PouchDB.debug.enable('*')
-
-const db = new PouchDB('test-001')
 let timerRunning = false
-
-db.changes({
-  since: 'now',
-  live: true
-}).on('change', change => {
-  console.log('change: ', change)
-  updateUI()
-})
-
-db.get('001').then(doc => {
-  console.log(doc)
-  return db.put({
-    _id: '001',
-    _rev: doc._rev,
-    text: `supersedes ${doc._rev}`,
-    period: 30000
-  })
-}).catch(err => {
-  if (err.status !== 404) throw err
-  db.put({
-    _id: '001',
-    text: 'hello'
-  })
-})
-
-db.get('002').then(doc => {
-  console.log(doc)
-  return db.put({
-    _id: '002',
-    _rev: doc._rev,
-    text: `supersedes ${doc._rev}`,
-    period: 60000
-  })
-}).catch(err => {
-  if (err.status !== 404) throw err
-  db.put({
-    _id: '002',
-    text: 'hello'
-  })
-})
+updateUI()
 
 function updateUI () {
   timerRunning = false
-  db.allDocs({
-    include_docs: true
-  }).then(result => {
+  recallEntries.then(result => {
     const entries = document.getElementById('entries')
 
     while (entries.firstChild) entries.removeChild(entries.firstChild)
 
     for (let row of result.rows) {
       const entry = document.createElement('div')
+      entry.setAttribute('id', row.doc._id)
 
-      const entryText = document.createElement('div')
-      entryText.classList.add('entryText')
-      entryText.textContent = row.doc.text
+      const entryIssuer = document.createElement('div')
+      entryIssuer.classList.add('entryIssuer')
+      entryIssuer.textContent = row.doc.issuer
 
       const entryTimer = document.createElement('canvas')
       entryTimer.classList.add('entryTimer')
@@ -68,7 +24,7 @@ function updateUI () {
       entryTimer.setAttribute('width', 48)
       entryTimer.setAttribute('height', 48)
 
-      entry.appendChild(entryText)
+      entry.appendChild(entryIssuer)
       entry.appendChild(entryTimer)
       entries.appendChild(entry)
     }
@@ -109,16 +65,8 @@ function drawTimer (canvas) {
   ctx.stroke()
 
   ctx.beginPath()
-  ctx.arc(radius, radius, radius, Math.PI * 1.5, endAngle, true)
+  ctx.arc(radius, radius, radius, 1.5 * Math.PI, endAngle, true)
   ctx.lineTo(radius, radius)
   ctx.lineTo(radius, 0)
   ctx.fill()
 }
-
-function storeEntry (secret, issuer = '', algorithm = 'SHA1', period = 30, digits = 6) {
-  return new Promise((resolve, reject) => {
-    if (!secret) reject('secret missing')
-  })
-}
-
-// TODO: HMAC
