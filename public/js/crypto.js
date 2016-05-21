@@ -70,9 +70,27 @@ export function exportKey (key, format = 'jwk') {
  */
 export function getToken (keyData, timeCounter) {
   return hmac(keyData, timeCounter).then(buffer => {
-    const view = Uint8Array(buffer)
+    const view = new Uint8Array(buffer)
     const offset = view[view.length - 1] & 0x0F
 
-    return offset
+    const resultBuffer = new ArrayBuffer(4)
+    let resultView = new DataView(resultBuffer)
+
+    for (var i = 0; i < 4; i++) {
+      resultView.setUint8(i, view[offset + i])
+    }
+
+    resultView.setUint8(
+      0,
+      resultView.getUint8(0) & 0x7F
+    )
+
+    console.log('resultView', resultView)
+
+    let result = resultView.getUint32(0, false) % 1E6
+
+    while (result.length < 6) result = '0' + result
+
+    return result
   })
 }

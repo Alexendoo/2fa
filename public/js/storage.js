@@ -4,7 +4,7 @@ import { exportKey, importKey } from './crypto'
 
 PouchDB.debug.enable('*')
 
-const db = new PouchDB('test-002')
+const db = new PouchDB('test-003')
 
 /**
  * Store a TOTP record

@@ -1,10 +1,10 @@
-import { recallEntries, recallEntry } from './storage'
+import { recallEntries, recallEntry, storeEntry } from './storage'
 import { getToken } from './crypto'
 
 let timerRunning = false
 updateEntries()
 
-// storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMX', 'company', 'example@email.com', 'SHA-1', 90)
+// storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ', 'company', 'example@email.com', 'SHA-1', 30)
 //   .then(entry => console.log(entry))
 
 function updateEntries () {
@@ -68,7 +68,20 @@ function timer () {
       entry.setAttribute('data-cycle', cycle)
 
       recallEntry(entry.id).then(doc => {
-        return getToken(doc.keyData, new Uint32Array([0, cycle]))
+        const buffer = new ArrayBuffer(8)
+        const view = new Uint8Array(buffer)
+        let hex = cycle.toString(16)
+
+        while (hex.length < 16) {
+          hex = '0' + hex
+        }
+
+        for (var i = 0; i < view.length; i++) {
+          console.log('idx', i, 'hex', hex.slice(i * 2, i * 2 + 2))
+          view[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+        }
+
+        return getToken(doc.keyData, buffer)
       }).then(token => {
         entryToken.textContent = token
       })
