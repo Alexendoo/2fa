@@ -4,14 +4,29 @@
 
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: #fafafa;
+  font-size: 14px;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 .entry {
+  display: flex;
   margin: 30px;
 }
 
-.entryIcon {
-  height: 48px;
-  width: 48px;
+.entryTimer {
+  margin-right: 8px;
+}
+
+.entryDetails {
+  flex-grow: 1;
+}
+
+.entryToken {
+  font-size: 18px;
+}
+
+.entryLabel {
+  border-bottom: 1px solid #e6e6e6;
 }

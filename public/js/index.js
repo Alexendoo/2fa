@@ -42,6 +42,14 @@ function updateEntries () {
       entry.setAttribute('data-period', row.doc.period)
       entry.setAttribute('data-cycle', 0)
 
+      const entryTimer = document.createElement('canvas')
+      entryTimer.classList.add('entryTimer')
+      entryTimer.setAttribute('width', 48)
+      entryTimer.setAttribute('height', 48)
+
+      const entryDetails = document.createElement('div')
+      entryDetails.classList.add('entryDetails')
+
       const entryToken = document.createElement('div')
       entryToken.classList.add('entryToken')
 
@@ -53,15 +61,11 @@ function updateEntries () {
       entryLabel.classList.add('entryLabel')
       entryLabel.textContent = row.doc.label
 
-      const entryTimer = document.createElement('canvas')
-      entryTimer.classList.add('entryTimer')
-      entryTimer.setAttribute('width', 48)
-      entryTimer.setAttribute('height', 48)
-
-      entry.appendChild(entryToken)
-      entry.appendChild(entryIssuer)
-      entry.appendChild(entryLabel)
+      entryDetails.appendChild(entryToken)
+      entryDetails.appendChild(entryIssuer)
+      entryDetails.appendChild(entryLabel)
       entry.appendChild(entryTimer)
+      entry.appendChild(entryDetails)
       entries.appendChild(entry)
 
       iconsPromise.then(icons => {
@@ -152,11 +156,11 @@ function drawTimer (canvas, period) {
 
   ctx.globalCompositeOperation = 'exclusion'
 
-  ctx.fillStyle = '#3b3b3b'
+  ctx.fillStyle = '#555'
 
   ctx.beginPath()
-  ctx.arc(canvas.width / 2, canvas.height / 2, radius, 1.5 * Math.PI, endAngle, true)
-  ctx.lineTo(canvas.width / 2, canvas.height / 2)
+  ctx.arc(canvas.width / 2, canvas.height / 2, radius, endAngle, 1.5 * Math.PI, true)
   ctx.lineTo(canvas.width / 2, 0)
+  ctx.lineTo(canvas.width / 2, canvas.height / 2)
   ctx.fill()
 }
