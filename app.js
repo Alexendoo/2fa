@@ -28,9 +28,9 @@ onerror(app)
 
 // logger
 app.use(function *(next) {
-  var start = new Date()
+  const start = new Date()
   yield next
-  var ms = new Date() - start
+  const ms = new Date() - start
   logger.info('%s %s - %s', this.method, this.url, ms)
 })
 

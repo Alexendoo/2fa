@@ -2,7 +2,7 @@ import PouchDB from 'pouchdb'
 import { base32ToArrayBuffer } from './base32'
 import { exportKey, importKey } from './crypto'
 
-PouchDB.debug.enable('*')
+PouchDB.debug.disable()
 
 const db = new PouchDB('test-003')
 

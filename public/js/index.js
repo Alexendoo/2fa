@@ -1,8 +1,15 @@
+/* global fetch */
 import { recallEntries, recallEntry, storeEntry } from './storage'
 import { totp } from './crypto'
 
-let timerRunning = false
+const iconsPromise = fetch('icons.json').then(response => {
+  return response.json()
+}).then(json => {
+  return json.icons
+})
+
 updateEntries()
+window.requestAnimationFrame(timer)
 
 // storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ', 'company', 'example@email.com', 'SHA-1', 30)
 //   .then(entry => console.log(entry))
@@ -12,7 +19,6 @@ updateEntries()
 // - or canvas binarisation/overlay
 
 function updateEntries () {
-  timerRunning = false
   recallEntries().then(result => {
     const entries = document.getElementById('entries')
 
@@ -42,21 +48,41 @@ function updateEntries () {
       entryTimer.setAttribute('width', 48)
       entryTimer.setAttribute('height', 48)
 
+      const entryIcon = document.createElement('div')
+      entryIcon.classList.add('entryIcon')
+
       entry.appendChild(entryToken)
       entry.appendChild(entryIssuer)
       entry.appendChild(entryLabel)
       entry.appendChild(entryTimer)
+      entry.appendChild(entryIcon)
       entries.appendChild(entry)
-    }
 
-    timerRunning = true
-    window.requestAnimationFrame(timer)
+      iconsPromise.then(icons => {
+        if (!icons.some(icon => icon.title === row.doc.issuer)) {
+          throw new Error(`${row.doc.issuer} has no icon`)
+        }
+
+        console.log('fetching', row.doc.issuer)
+
+        const title = row.doc.issuer
+          .replace(' ', '')
+          .replace('.', '')
+          .replace('+', 'plus')
+          .toLowerCase()
+
+        return fetch(`icons/${title}.svg`)
+      }).then(response => {
+        return response.text()
+      }).then(svg => {
+        console.log('fetched', row.doc.issuer)
+        entryIcon.innerHTML = svg
+      }).catch(console.log.bind(console))
+    }
   })
 }
 
 function timer () {
-  if (!timerRunning) return
-
   const entries = document.getElementById('entries')
 
   for (let entry of entries.children) {

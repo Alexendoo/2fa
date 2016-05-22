@@ -10,3 +10,8 @@ body {
 .entry {
   margin: 30px;
 }
+
+.entryIcon {
+  height: 48px;
+  width: 48px;
+}
