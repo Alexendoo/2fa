@@ -7,6 +7,10 @@ updateEntries()
 // storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ', 'company', 'example@email.com', 'SHA-1', 30)
 //   .then(entry => console.log(entry))
 
+// TODO:
+// - http://simpleicons.org/ + spinner turns monochrome?
+// - or canvas binarisation/overlay
+
 function updateEntries () {
   timerRunning = false
   recallEntries().then(result => {
