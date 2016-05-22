@@ -1,5 +1,5 @@
 import { recallEntries, recallEntry, storeEntry } from './storage'
-import { getToken } from './crypto'
+import { totp } from './crypto'
 
 let timerRunning = false
 updateEntries()
@@ -18,6 +18,7 @@ function updateEntries () {
       const entry = document.createElement('div')
       entry.classList.add('entry')
       entry.setAttribute('id', row.doc._id)
+      entry.setAttribute('data-digits', row.doc.digits)
       entry.setAttribute('data-period', row.doc.period)
       entry.setAttribute('data-cycle', 0)
 
@@ -57,6 +58,7 @@ function timer () {
   for (let entry of entries.children) {
     const entryTimer = entry.querySelector('.entryTimer')
     const period = entry.getAttribute('data-period') * 1000
+    const digits = entry.getAttribute('data-digits')
 
     const cycle = Math.floor(Date.now() / period)
     const lastCycle = entry.getAttribute('data-cycle')
@@ -68,20 +70,7 @@ function timer () {
       entry.setAttribute('data-cycle', cycle)
 
       recallEntry(entry.id).then(doc => {
-        const buffer = new ArrayBuffer(8)
-        const view = new Uint8Array(buffer)
-        let hex = cycle.toString(16)
-
-        while (hex.length < 16) {
-          hex = '0' + hex
-        }
-
-        for (var i = 0; i < view.length; i++) {
-          console.log('idx', i, 'hex', hex.slice(i * 2, i * 2 + 2))
-          view[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
-        }
-
-        return getToken(doc.keyData, buffer)
+        return totp(doc.keyData, cycle, digits)
       }).then(token => {
         entryToken.textContent = token
       })
