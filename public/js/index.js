@@ -8,6 +8,8 @@ const iconsPromise = fetch('icons.json').then(response => {
   return json.icons
 })
 
+let entryProperties = {}
+
 updateEntries()
 window.requestAnimationFrame(timer)
 
@@ -21,11 +23,18 @@ window.requestAnimationFrame(timer)
 function updateEntries () {
   recallEntries().then(result => {
     const entries = document.getElementById('entries')
+    entryProperties = {}
 
     while (entries.firstChild) entries.removeChild(entries.firstChild)
 
     for (let row of result.rows) {
       const entry = document.createElement('div')
+
+      entryProperties[row.doc._id] = {
+        keyData: row.doc.keyData,
+        canvas: null
+      }
+
       entry.classList.add('entry')
       entry.setAttribute('id', row.doc._id)
       entry.setAttribute('data-digits', row.doc.digits)
@@ -48,22 +57,15 @@ function updateEntries () {
       entryTimer.setAttribute('width', 48)
       entryTimer.setAttribute('height', 48)
 
-      const entryIcon = document.createElement('div')
-      entryIcon.classList.add('entryIcon')
-
       entry.appendChild(entryToken)
       entry.appendChild(entryIssuer)
       entry.appendChild(entryLabel)
       entry.appendChild(entryTimer)
-      entry.appendChild(entryIcon)
       entries.appendChild(entry)
 
       iconsPromise.then(icons => {
-        if (!icons.some(icon => icon.title === row.doc.issuer)) {
-          throw new Error(`${row.doc.issuer} has no icon`)
-        }
-
-        console.log('fetching', row.doc.issuer)
+        const icon = icons.find(icon => icon.title === row.doc.issuer)
+        if (!icon) throw new Error(`${row.doc.issuer} has no icon`)
 
         const title = row.doc.issuer
           .replace(' ', '')
@@ -71,12 +73,34 @@ function updateEntries () {
           .replace('+', 'plus')
           .toLowerCase()
 
-        return fetch(`icons/${title}.svg`)
-      }).then(response => {
-        return response.text()
-      }).then(svg => {
-        console.log('fetched', row.doc.issuer)
-        entryIcon.innerHTML = svg
+        const image = document.createElement('img')
+
+        image.addEventListener('load', () => {
+          const canvas = document.createElement('canvas')
+          canvas.setAttribute('width', 48)
+          canvas.setAttribute('height', 48)
+
+          const ctx = canvas.getContext('2d')
+          const width = entryTimer.width
+          const height = entryTimer.height
+          const margin = 10
+
+          ctx.drawImage(
+            image,
+            margin,
+            margin,
+            width - margin * 2,
+            height - margin * 2
+          )
+
+          ctx.globalCompositeOperation = 'source-out'
+          ctx.fillStyle = `#${icon.hex}`
+          ctx.fillRect(0, 0, width, height)
+
+          entryProperties[row.doc._id].canvas = canvas
+        })
+
+        image.src = `icons/${title}.svg`
       }).catch(console.log.bind(console))
     }
   })
@@ -99,9 +123,7 @@ function timer () {
       const entryToken = entry.querySelector('.entryToken')
       entry.setAttribute('data-cycle', cycle)
 
-      recallEntry(entry.id).then(doc => {
-        return totp(doc.keyData, cycle, digits)
-      }).then(token => {
+      totp(entryProperties[entry.id].keyData, cycle, digits).then(token => {
         entryToken.textContent = token
       })
     }
@@ -115,10 +137,14 @@ function drawTimer (canvas, period) {
   const radius = canvas.width / 2
   const time = Date.now() % period
   const endAngle = 1.5 * Math.PI + 2 * time * Math.PI / period
+  const baseCanvas = entryProperties[canvas.parentNode.id].canvas
 
-  let ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d')
 
   ctx.clearRect(0, 0, canvas.width, canvas.width)
+
+  if (baseCanvas) ctx.drawImage(baseCanvas, 0, 0)
+
   ctx.strokeStyle = '#42A5F5'
   ctx.fillStyle = '#42A5F5'
 
