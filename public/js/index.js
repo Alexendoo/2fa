@@ -13,8 +13,9 @@ let entryProperties = {}
 updateEntries()
 window.requestAnimationFrame(timer)
 
-// storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ', 'company', 'example@email.com', 'SHA-1', 30)
-//   .then(entry => console.log(entry))
+// storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTM',
+//   'company', 'example@email.com', 'SHA-1', 30)
+//     .then(entry => console.log(entry))
 
 // TODO:
 // - http://simpleicons.org/ + spinner turns monochrome?
@@ -93,7 +94,11 @@ function updateEntries () {
             height - margin * 2
           )
 
-          ctx.globalCompositeOperation = 'source-out'
+          ctx.globalCompositeOperation = 'source-atop'
+          ctx.fillStyle = '#ffffff'
+          ctx.fillRect(0, 0, width, height)
+
+          ctx.globalCompositeOperation = 'destination-over'
           ctx.fillStyle = `#${icon.hex}`
           ctx.fillRect(0, 0, width, height)
 
@@ -134,7 +139,7 @@ function timer () {
 
 function drawTimer (canvas, period) {
   if (!canvas.getContext) return
-  const radius = canvas.width / 2
+  const radius = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2))
   const time = Date.now() % period
   const endAngle = 1.5 * Math.PI + 2 * time * Math.PI / period
   const baseCanvas = entryProperties[canvas.parentNode.id].canvas
@@ -145,16 +150,13 @@ function drawTimer (canvas, period) {
 
   if (baseCanvas) ctx.drawImage(baseCanvas, 0, 0)
 
-  ctx.strokeStyle = '#42A5F5'
-  ctx.fillStyle = '#42A5F5'
+  ctx.globalCompositeOperation = 'exclusion'
+
+  ctx.fillStyle = '#3b3b3b'
 
   ctx.beginPath()
-  ctx.arc(radius, radius, radius, 0, 2 * Math.PI)
-  ctx.stroke()
-
-  ctx.beginPath()
-  ctx.arc(radius, radius, radius, 1.5 * Math.PI, endAngle, true)
-  ctx.lineTo(radius, radius)
-  ctx.lineTo(radius, 0)
+  ctx.arc(canvas.width / 2, canvas.height / 2, radius, 1.5 * Math.PI, endAngle, true)
+  ctx.lineTo(canvas.width / 2, canvas.height / 2)
+  ctx.lineTo(canvas.width / 2, 0)
   ctx.fill()
 }
