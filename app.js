@@ -16,6 +16,7 @@ app.use(require('koa-bodyparser')())
 app.use(json())
 app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
 app.use(serve(path.join(__dirname, 'public')))
+app.use(serve(path.join(__dirname, 'bower_components')))
 
 // setup view
 app.use(views('views', {

@@ -1,0 +1,19 @@
+{
+  "name": "2fa",
+  "description": "",
+  "main": "bin/www",
+  "authors": [
+    "Alex Macleod <alex@macleod.io>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Alexendoo/2fa",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "logs"
+  ],
+  "dependencies": {
+    "pouchdb": "^5.3.2"
+  }
+}

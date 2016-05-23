@@ -1,6 +1,6 @@
 node_modules
 npm-debug.log
 
-public/jspm_packages
+bower_components
 
 logs
