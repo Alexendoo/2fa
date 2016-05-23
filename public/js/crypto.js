@@ -1,3 +1,5 @@
+const subtle = window.crypto.subtle || window.crypto.webkitSubtle
+
 /**
  * Get the HMAC signature of a message
  *
@@ -10,7 +12,7 @@
  */
 export function hmac (keyData, message, algorithm = 'SHA-1') {
   return importKey(keyData, algorithm)
-    .then(key => window.crypto.subtle.sign(
+    .then(key => subtle.sign(
       {
         name: 'HMAC'
       },
@@ -29,7 +31,7 @@ export function hmac (keyData, message, algorithm = 'SHA-1') {
  * @return {Promise} Resolves to the generated CryptoKey
  */
 export function importKey (keyData, algorithm = 'SHA-1') {
-  return window.crypto.subtle.importKey(
+  return subtle.importKey(
     keyData instanceof ArrayBuffer ? 'raw' : 'jwk',
     keyData,
     {
@@ -54,7 +56,7 @@ export function importKey (keyData, algorithm = 'SHA-1') {
  * @see
  */
 export function exportKey (key, format = 'jwk') {
-  return window.crypto.subtle.exportKey(
+  return subtle.exportKey(
     format, key
   )
 }
