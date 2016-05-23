@@ -1,12 +1,16 @@
 extends layout
 
-append script
- script(type='application/javascript', src='pouchdb/dist/pouchdb.js')
- script(type='application/javascript', src='js/main.js')
- script(type='application/javascript', src='js/base32.js')
- script(type='application/javascript', src='js/crypto.js')
- script(type='application/javascript', src='js/storage.js')
- script(type='application/javascript', src='js/index.js')
+append bodyScript
+  script(type='application/javascript', src='pouchdb/dist/pouchdb.js')
+  script(type='application/javascript', src='js/asmcrypto.js')
+  script(type='application/javascript', src='js/main.js')
+  script(type='application/javascript', src='js/base32.js')
+  script(type='application/javascript', src='js/crypto.js')
+  script(type='application/javascript', src='js/storage.js')
+  script(type='application/javascript', src='js/index.js')
+
+append style
+  link(rel='stylesheet', href='/css/style.css')
 
 block content
   h1= title

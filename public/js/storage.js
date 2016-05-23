@@ -1,3 +1,4 @@
+/* global PouchDB */
 ;(function () {
   const base32ToArrayBuffer = window.TFA.base32.base32ToArrayBuffer
   const importKey = window.TFA.crypto.importKey
@@ -28,7 +29,7 @@
       if (!secret) reject(Error('secret missing'))
 
       resolve(base32ToArrayBuffer(secret))
-    }).then(buffer => {
+    }).then(buffer => { // TODO: getjwk
       return importKey(buffer, algorithm)
     }).then(cryptoKey => {
       return exportKey(cryptoKey, 'jwk')

@@ -1,6 +1,6 @@
 `npm install`
 
-`npm run build`
+`bower install`
 
 `npm start`
 

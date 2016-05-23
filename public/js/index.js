@@ -1,7 +1,6 @@
 /* global fetch */
 ;(function () {
   const recallEntries = window.TFA.storage.recallEntries
-  const recallEntry = window.TFA.storage.recallEntry
   const storeEntry = window.TFA.storage.storeEntry
   const totp = window.TFA.crypto.totp
 
@@ -19,10 +18,6 @@
   // storeEntry('HXDMVJECJJWSRB3HWIZR4IFUGFTM',
   //   'company', 'example@email.com', 'SHA-1', 30)
   //     .then(entry => console.log(entry))
-
-  // TODO:
-  // - http://simpleicons.org/ + spinner turns monochrome?
-  // - or canvas binarisation/overlay
 
   function updateEntries () {
     recallEntries().then(result => {
@@ -159,7 +154,7 @@
 
     ctx.globalCompositeOperation = 'exclusion'
 
-    ctx.fillStyle = '#555'
+    ctx.fillStyle = '#666'
 
     ctx.beginPath()
     ctx.arc(canvas.width / 2, canvas.height / 2, radius, endAngle, 1.5 * Math.PI, true)

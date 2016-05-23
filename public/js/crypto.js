@@ -1,3 +1,4 @@
+/* globals asmCrypto */
 ;(function () {
   const subtle = window.crypto.subtle || window.crypto.webkitSubtle
 
@@ -43,6 +44,8 @@
       ['sign']
     )
   }
+
+  // TODO: getJwk = export(import) for native, custom for fallback
 
   /**
    * Export a key to the requested format, or
