@@ -1,4 +1,4 @@
-/* global fetch */
+/* eslint-env browser */
 ;(function () {
   const recallEntries = window.TFA.storage.recallEntries
   const storeEntry = window.TFA.storage.storeEntry

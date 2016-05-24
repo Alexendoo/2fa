@@ -1,0 +1,8 @@
+{
+  "name": "Web 2 Factor Authentication",
+  "short_name": "Web 2FA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#00796B"
+}
