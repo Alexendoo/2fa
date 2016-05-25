@@ -17,6 +17,17 @@ body {
 }
 
 .entryTimer {
+  position: relative;
+}
+
+.entryTimer svg {
+  position: absolute;
+  margin: 12px;
+  left: 0;
+}
+
+.entryTimer path, .entryTimer ellipse, .entryTimer circle {
+  fill: white;
 }
 
 .entryDetails {

@@ -30,9 +30,10 @@
         const entry = document.createElement('div')
 
         entryProperties[row.doc._id] = {
-          keyData: row.doc.keyData,
-          canvas: null
+          keyData: row.doc.keyData
         }
+
+        // TODO: better naming
 
         entry.classList.add('entry')
         entry.setAttribute('id', row.doc._id)
@@ -40,10 +41,13 @@
         entry.setAttribute('data-period', row.doc.period)
         entry.setAttribute('data-cycle', 0)
 
-        const entryTimer = document.createElement('canvas')
+        const entryTimer = document.createElement('div')
         entryTimer.classList.add('entryTimer')
-        entryTimer.setAttribute('width', 48)
-        entryTimer.setAttribute('height', 48)
+
+        const entryTimerCanvas = document.createElement('canvas')
+        entryTimerCanvas.classList.add('entryTimerCanvas')
+        entryTimerCanvas.setAttribute('width', 200)
+        entryTimerCanvas.setAttribute('height', 200)
 
         const entryDetails = document.createElement('div')
         entryDetails.classList.add('entryDetails')
@@ -59,11 +63,15 @@
         entryLabel.classList.add('entryLabel')
         entryLabel.textContent = row.doc.label
 
+        entryTimer.appendChild(entryTimerCanvas)
+
         entryDetails.appendChild(entryToken)
         entryDetails.appendChild(entryIssuer)
         entryDetails.appendChild(entryLabel)
+
         entry.appendChild(entryTimer)
         entry.appendChild(entryDetails)
+
         entries.appendChild(entry)
 
         iconsPromise.then(icons => {
@@ -76,39 +84,14 @@
             .replace('+', 'plus')
             .toLowerCase()
 
-          const image = document.createElement('img')
-
-          image.addEventListener('load', () => {
-            const canvas = document.createElement('canvas')
-            canvas.setAttribute('width', 48)
-            canvas.setAttribute('height', 48)
-
-            const ctx = canvas.getContext('2d')
-            const width = entryTimer.width
-            const height = entryTimer.height
-            const margin = 10
-
-            ctx.drawImage(
-              image,
-              margin,
-              margin,
-              width - margin * 2,
-              height - margin * 2
-            )
-
-            ctx.globalCompositeOperation = 'source-atop'
-            ctx.fillStyle = '#ffffff'
-            ctx.fillRect(0, 0, width, height)
-
-            ctx.globalCompositeOperation = 'destination-over'
-            ctx.fillStyle = `#${icon.hex}`
-            ctx.fillRect(0, 0, width, height)
-
-            entryProperties[row.doc._id].canvas = canvas
-          })
-
-          image.src = `icons/${title}.svg`
-        }).catch(console.log.bind(console))
+          return fetch(`icons/${title}.svg`)
+        }).then(response => {
+          return response.text()
+        }).then(text => {
+          entryTimer.innerHTML += text
+        }).catch(
+          console.log.bind(console)
+        )
       }
     })
   }
@@ -117,14 +100,14 @@
     const entries = document.getElementById('entries')
 
     for (let entry of entries.children) {
-      const entryTimer = entry.querySelector('.entryTimer')
+      const entryTimerCanvas = entry.querySelector('.entryTimerCanvas')
       const period = entry.getAttribute('data-period') * 1000
       const digits = entry.getAttribute('data-digits')
 
       const cycle = Math.floor(Date.now() / period)
       const lastCycle = entry.getAttribute('data-cycle')
 
-      drawTimer(entryTimer, period)
+      drawTimer(entryTimerCanvas, period)
 
       if (cycle > lastCycle) {
         const entryToken = entry.querySelector('.entryToken')
@@ -140,26 +123,26 @@
   }
 
   function drawTimer (canvas, period) {
-    if (!canvas.getContext) return
-    const radius = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2))
+    if (!canvas.getContext) throw new TypeError('expected canvas')
+    const radius = 100
     const time = Date.now() % period
     const endAngle = 1.5 * Math.PI + 2 * time * Math.PI / period
-    const baseCanvas = entryProperties[canvas.parentNode.id].canvas
 
     const ctx = canvas.getContext('2d')
 
     ctx.clearRect(0, 0, canvas.width, canvas.width)
 
-    if (baseCanvas) ctx.drawImage(baseCanvas, 0, 0)
+    ctx.fillStyle = '#111'
 
-    ctx.globalCompositeOperation = 'exclusion'
+    ctx.beginPath()
+    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, 2 * Math.PI)
+    ctx.fill()
 
-    ctx.fillStyle = '#666'
+    ctx.strokeStyle = 'orange'
+    ctx.lineWidth = 24
 
     ctx.beginPath()
     ctx.arc(canvas.width / 2, canvas.height / 2, radius, endAngle, 1.5 * Math.PI, true)
-    ctx.lineTo(canvas.width / 2, 0)
-    ctx.lineTo(canvas.width / 2, canvas.height / 2)
-    ctx.fill()
+    ctx.stroke()
   }
 })()
