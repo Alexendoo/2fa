@@ -26,16 +26,16 @@ self.addEventListener('activate', event => {
   console.log(event)
 })
 
-// self.addEventListener('fetch', event => {
-//   const requestUrl = event.request.url
-//
-//   event.respondWith(
-//     caches.match(event.request).then(response => {
-//       if (uneeded.some(url => requestUrl.endsWith(url))) {
-//         return new Response(null, {status: 204})
-//       }
-//
-//       return response || fetch(event.request)
-//     })
-//   )
-// })
+self.addEventListener('fetch', event => {
+  const requestUrl = event.request.url
+
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      if (uneeded.some(url => requestUrl.endsWith(url))) {
+        return new Response(null, {status: 204})
+      }
+
+      return response || fetch(event.request)
+    })
+  )
+})

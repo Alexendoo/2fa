@@ -2,9 +2,7 @@
   window.TFA = window.TFA || {}
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-      // console.log(reg)
-    }).catch(err => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
       console.log(err)
     })
   }

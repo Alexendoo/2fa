@@ -93,9 +93,9 @@
         0, resultView.getUint8(0) & 0x7F
       )
 
-      let result = resultView.getUint32(0, false) % Math.pow(10, digits)
+      let result = (resultView.getUint32(0, false) % Math.pow(10, digits)).toString()
 
-      while (result.length < 6) result = '0' + result
+      while (result.length < digits) result = '0' + result
 
       return result
     })
