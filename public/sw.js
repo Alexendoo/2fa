@@ -5,6 +5,7 @@ const cached = [
   'js/crypto.js',
   'js/index.js',
   'js/main.js',
+  'js/modernizr.js',
   'js/storage.js',
   'pouchdb/dist/pouchdb.js'
 ]

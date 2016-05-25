@@ -1,0 +1,13 @@
+{
+  "minify": false,
+  "options": [
+    "setClasses"
+  ],
+  "feature-detects": [
+    "test/canvas",
+    "test/crypto",
+    "test/dataview-api",
+    "test/requestanimationframe",
+    "test/svg"
+  ]
+}

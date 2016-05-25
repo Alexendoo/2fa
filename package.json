@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "node ./bin/www",
-    "build": "jspm install",
+    "build": "bower install && modernizr -c modernizr-config.json -d public/js/modernizr.js",
     "test": "gulp build"
   },
   "dependencies": {
@@ -18,6 +18,8 @@
     "koa-views": "^3.1.0"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
+    "modernizr": "^3.3.1",
     "standard": "^7.0.1"
   }
 }
