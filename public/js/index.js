@@ -99,7 +99,7 @@
   function timer () {
     const entries = document.getElementById('entries')
 
-    for (let entry of entries.children) {
+    Array.prototype.forEach.call(entries.children, entry => {
       const entryTimerCanvas = entry.querySelector('.entryTimerCanvas')
       const period = entry.getAttribute('data-period') * 1000
       const digits = entry.getAttribute('data-digits')
@@ -117,7 +117,7 @@
           entryToken.textContent = token
         })
       }
-    }
+    })
 
     window.requestAnimationFrame(timer)
   }

@@ -29,7 +29,7 @@
       if (!secret) reject(Error('secret missing'))
 
       resolve(base32ToArrayBuffer(secret))
-    }).then(buffer => { // TODO: getjwk
+    }).then(buffer => { // TODO: getjwk?
       return importKey(buffer, algorithm)
     }).then(cryptoKey => {
       return exportKey(cryptoKey, 'jwk')
